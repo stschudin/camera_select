@@ -6,15 +6,20 @@ const startCameraButton = document.getElementById("startCamera");
 const capturePhotoButton = document.getElementById("capturePhoto");
 const discardPhotoButton = document.getElementById("discardPhoto");
 const photoCanvas = document.getElementById("photoCanvas");
+const ocrResults = document.getElementById("ocrResults");
+const matchedText = document.getElementById("matchedText");
+
+// JSON-Fragmente laden
+const fragments = ["ZH14", "AC", "LU100"];
 
 // Funktion, um verfügbare Kameras aufzulisten
 async function listCameras() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Kamera aktivieren, um Zugriff zu erlauben
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(device => device.kind === "videoinput");
 
-    cameraSelect.innerHTML = ""; // Vorherige Optionen entfernen
+    cameraSelect.innerHTML = "";
     videoDevices.forEach((device, index) => {
       const option = document.createElement("option");
       option.value = device.deviceId;
@@ -22,7 +27,6 @@ async function listCameras() {
       cameraSelect.appendChild(option);
     });
 
-    // Standardkamera anzeigen
     if (videoDevices.length > 0) {
       activateCamera(videoDevices[0].deviceId);
     }
@@ -35,15 +39,14 @@ async function listCameras() {
 // Funktion, um eine ausgewählte Kamera zu aktivieren
 async function activateCamera(deviceId) {
   try {
-    const constraints = deviceId
-      ? { video: { deviceId: { exact: deviceId } } }
-      : { video: true };
+    const constraints = deviceId ? { video: { deviceId: { exact: deviceId } } } : { video: true };
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     videoElement.srcObject = stream;
-    videoElement.style.display = "block"; // Video sichtbar machen
-    capturePhotoButton.style.display = "inline"; // Foto-Button sichtbar machen
-    discardPhotoButton.style.display = "none"; // Verwerfen-Button ausblenden
-    photoCanvas.style.display = "none"; // Canvas verstecken
+    videoElement.style.display = "block";
+    capturePhotoButton.style.display = "inline";
+    discardPhotoButton.style.display = "none";
+    photoCanvas.style.display = "none";
+    ocrResults.style.display = "none";
   } catch (error) {
     console.error("Kamera konnte nicht aktiviert werden:", error);
     alert("Fehler beim Aktivieren der Kamera.");
@@ -55,31 +58,55 @@ function capturePhoto() {
   const context = photoCanvas.getContext("2d");
   photoCanvas.width = videoElement.videoWidth;
   photoCanvas.height = videoElement.videoHeight;
-  photoCanvas.style.width = videoElement.style.width;
-  photoCanvas.style.height = videoElement.style.height;
   context.drawImage(videoElement, 0, 0, photoCanvas.width, photoCanvas.height);
-  photoCanvas.style.display = "block"; // Canvas sichtbar machen
-  videoElement.style.display = "none"; // Video verstecken
-  discardPhotoButton.style.display = "inline"; // Verwerfen-Button sichtbar machen
+  photoCanvas.style.display = "block";
+  videoElement.style.display = "none";
+  discardPhotoButton.style.display = "inline";
+
+  // OCR und JSON-Abgleich durchführen
+  performOCR(photoCanvas);
 }
 
 // Funktion, um das Foto zu verwerfen
 function discardPhoto() {
-  photoCanvas.style.display = "none"; // Canvas verstecken
-  videoElement.style.display = "block"; // Video sichtbar machen
-  discardPhotoButton.style.display = "none"; // Verwerfen-Button ausblenden
+  photoCanvas.style.display = "none";
+  videoElement.style.display = "block";
+  discardPhotoButton.style.display = "none";
+  ocrResults.style.display = "none";
 }
 
-// Ereignislistener für den Kamera-Start-Button
+// OCR-Funktion mit Tesseract.js
+async function performOCR(canvas) {
+  const { createWorker } = Tesseract;
+  const worker = createWorker();
+  await worker.load();
+  await worker.loadLanguage("eng");
+  await worker.initialize("eng");
+
+  const { data: { text } } = await worker.recognize(canvas);
+  console.log("Erkannter Text:", text);
+  await worker.terminate();
+
+  checkJSONForMatches(text);
+}
+
+// JSON-Abgleich durchführen
+function checkJSONForMatches(extractedText) {
+  const match = fragments.find(fragment => extractedText.includes(fragment));
+  if (match) {
+    matchedText.textContent = match;
+    ocrResults.style.display = "block";
+  } else {
+    alert("Keine Übereinstimmung gefunden.");
+  }
+}
+
+// Ereignislistener
 startCameraButton.addEventListener("click", () => {
   const selectedCameraId = cameraSelect.value;
   activateCamera(selectedCameraId);
 });
-
-// Ereignislistener für den Foto-Button
 capturePhotoButton.addEventListener("click", capturePhoto);
-
-// Ereignislistener für den Foto-Verwerfen-Button
 discardPhotoButton.addEventListener("click", discardPhoto);
 
 // Kameras initial laden

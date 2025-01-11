@@ -54,3 +54,8 @@ video, canvas {
   height: auto;
   border: 1px solid #333;
 }
+
+#ocrResults {
+  color: #006400;
+  font-size: 18px;
+}

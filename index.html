@@ -11,25 +11,26 @@
 <body>
   <h1>Kamera-Auswahl</h1>
   
-  <!-- Hinweis für den Nutzer -->
   <p>Bitte erteilen Sie der Webseite Zugriff auf Ihre Kamera, um die Kamerafunktionalität zu nutzen.</p>
   
-  <!-- Dropdown zur Auswahl der Kamera -->
   <select id="cameraSelect">
     <option value="">Kamera auswählen...</option>
   </select>
   
-  <!-- Button-Reihe -->
   <div id="buttonRow">
     <button id="startCamera">Kamera aktivieren</button>
     <button id="capturePhoto" style="display: none;">Foto machen</button>
     <button id="discardPhoto" style="display: none;">Foto verwerfen</button>
   </div>
   
-  <!-- Video-Element für den Kamerastream -->
   <div style="position: relative; display: inline-block; max-width: 100%;">
     <video id="video" autoplay playsinline style="display: none; width: 100%; max-width: 600px;"></video>
     <canvas id="photoCanvas" style="display: none; position: absolute; top: 0; left: 0; width: 100%; max-width: 600px;"></canvas>
+  </div>
+  
+  <div id="ocrResults" style="display: none; margin-top: 20px; text-align: center;">
+    <p>Gefundene Übereinstimmung:</p>
+    <p id="matchedText" style="font-weight: bold;"></p>
   </div>
 
   <script src="script.js"></script>
