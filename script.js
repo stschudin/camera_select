@@ -1,4 +1,3 @@
-// Last updated: 2025-01-11 20:44:36
 
 const videoElement = document.getElementById("video");
 const cameraSelect = document.getElementById("cameraSelect");
@@ -15,24 +14,17 @@ const fragments = ["ZH14", "AC", "LU100"];
 // Funktion, um verfügbare Kameras aufzulisten
 async function listCameras() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(device => device.kind === "videoinput");
-
     cameraSelect.innerHTML = "";
-    videoDevices.forEach((device, index) => {
+    videoDevices.forEach((device, idx) => {
       const option = document.createElement("option");
       option.value = device.deviceId;
-      option.text = device.label || `Kamera ${index + 1}`;
+      option.text = device.label || `Kamera ${idx + 1}`;
       cameraSelect.appendChild(option);
     });
-
-    if (videoDevices.length > 0) {
-      activateCamera(videoDevices[0].deviceId);
-    }
   } catch (error) {
     console.error("Fehler beim Abrufen der Kameras:", error);
-    alert("Kamera konnte nicht erkannt werden. Bitte überprüfen Sie die Berechtigungen.");
   }
 }
 
@@ -49,7 +41,6 @@ async function activateCamera(deviceId) {
     ocrResults.style.display = "none";
   } catch (error) {
     console.error("Kamera konnte nicht aktiviert werden:", error);
-    alert("Fehler beim Aktivieren der Kamera.");
   }
 }
 
@@ -59,20 +50,7 @@ function capturePhoto() {
   photoCanvas.width = videoElement.videoWidth;
   photoCanvas.height = videoElement.videoHeight;
   context.drawImage(videoElement, 0, 0, photoCanvas.width, photoCanvas.height);
-  photoCanvas.style.display = "block";
-  videoElement.style.display = "none";
-  discardPhotoButton.style.display = "inline";
-
-  // OCR und JSON-Abgleich durchführen
   performOCR(photoCanvas);
-}
-
-// Funktion, um das Foto zu verwerfen
-function discardPhoto() {
-  photoCanvas.style.display = "none";
-  videoElement.style.display = "block";
-  discardPhotoButton.style.display = "none";
-  ocrResults.style.display = "none";
 }
 
 // OCR-Funktion mit Tesseract.js
@@ -84,30 +62,35 @@ async function performOCR(canvas) {
   await worker.initialize("eng");
 
   const { data: { text } } = await worker.recognize(canvas);
-  console.log("Erkannter Text:", text);
   await worker.terminate();
-
   checkJSONForMatches(text);
 }
 
 // JSON-Abgleich durchführen
 function checkJSONForMatches(extractedText) {
-  const match = fragments.find(fragment => extractedText.includes(fragment));
+  const match = fragments.some(fragment => extractedText.includes(fragment));
+
   if (match) {
-    matchedText.textContent = match;
-    ocrResults.style.display = "block";
+    matchedText.textContent = "Der erkannte Text ist in der JSON-Datei enthalten.";
+    matchedText.style.color = "green";
   } else {
-    alert("Keine Übereinstimmung gefunden.");
+    matchedText.textContent = "Der erkannte Text ist nicht in der JSON-Datei enthalten.";
+    matchedText.style.color = "red";
   }
+
+  ocrResults.style.display = "block";
 }
 
-// Ereignislistener
+// Ereignislistener einrichten
 startCameraButton.addEventListener("click", () => {
   const selectedCameraId = cameraSelect.value;
   activateCamera(selectedCameraId);
 });
 capturePhotoButton.addEventListener("click", capturePhoto);
-discardPhotoButton.addEventListener("click", discardPhoto);
+discardPhotoButton.addEventListener("click", () => {
+  photoCanvas.style.display = "none";
+  videoElement.style.display = "block";
+});
 
 // Kameras initial laden
 listCameras();
