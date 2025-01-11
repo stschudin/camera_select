@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kamera-Auswahl</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Kamera-Auswahl</h1>
+  
+  <!-- Hinweis für den Nutzer -->
+  <p>Bitte erteilen Sie der Webseite Zugriff auf Ihre Kamera, um die Kamerafunktionalität zu nutzen.</p>
+  
+  <!-- Dropdown zur Auswahl der Kamera -->
+  <select id="cameraSelect">
+    <option value="">Kamera auswählen...</option>
+  </select>
+  
+  <!-- Button, um die Kamera zu starten -->
+  <button id="startCamera">Kamera aktivieren</button>
+  
+  <!-- Video-Element für den Kamerastream -->
+  <video id="video" autoplay playsinline style="display: none;"></video>
+
+  <script src="script.js"></script>
+</body>
+</html>
