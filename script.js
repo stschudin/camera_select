@@ -54,6 +54,8 @@ function capturePhoto() {
   const context = photoCanvas.getContext("2d");
   photoCanvas.width = videoElement.videoWidth;
   photoCanvas.height = videoElement.videoHeight;
+  photoCanvas.style.width = videoElement.style.width;
+  photoCanvas.style.height = videoElement.style.height;
   context.drawImage(videoElement, 0, 0, photoCanvas.width, photoCanvas.height);
   photoCanvas.style.display = "block"; // Canvas sichtbar machen
   videoElement.style.display = "none"; // Video verstecken

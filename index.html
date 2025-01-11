@@ -18,15 +18,17 @@
     <option value="">Kamera auswählen...</option>
   </select>
   
-  <!-- Buttons -->
-  <button id="startCamera">Kamera aktivieren</button>
-  <button id="capturePhoto" style="display: none;">Foto machen</button>
-  <button id="discardPhoto" style="display: none;">Foto verwerfen</button>
+  <!-- Button-Reihe -->
+  <div id="buttonRow">
+    <button id="startCamera">Kamera aktivieren</button>
+    <button id="capturePhoto" style="display: none;">Foto machen</button>
+    <button id="discardPhoto" style="display: none;">Foto verwerfen</button>
+  </div>
   
   <!-- Video-Element für den Kamerastream -->
-  <div style="position: relative; display: inline-block;">
-    <video id="video" autoplay playsinline style="display: none;"></video>
-    <canvas id="photoCanvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
+  <div style="position: relative; display: inline-block; max-width: 100%;">
+    <video id="video" autoplay playsinline style="display: none; width: 100%; max-width: 600px;"></video>
+    <canvas id="photoCanvas" style="display: none; position: absolute; top: 0; left: 0; width: 100%; max-width: 600px;"></canvas>
   </div>
 
   <script src="script.js"></script>
