@@ -21,12 +21,13 @@
   <!-- Buttons -->
   <button id="startCamera">Kamera aktivieren</button>
   <button id="capturePhoto" style="display: none;">Foto machen</button>
+  <button id="discardPhoto" style="display: none;">Foto verwerfen</button>
   
   <!-- Video-Element für den Kamerastream -->
-  <video id="video" autoplay playsinline style="display: none;"></video>
-  
-  <!-- Canvas zum Anzeigen des Fotos -->
-  <canvas id="photoCanvas" style="display: none;"></canvas>
+  <div style="position: relative; display: inline-block;">
+    <video id="video" autoplay playsinline style="display: none;"></video>
+    <canvas id="photoCanvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
+  </div>
 
   <script src="script.js"></script>
 </body>
