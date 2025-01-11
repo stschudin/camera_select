@@ -18,11 +18,15 @@
     <option value="">Kamera auswählen...</option>
   </select>
   
-  <!-- Button, um die Kamera zu starten -->
+  <!-- Buttons -->
   <button id="startCamera">Kamera aktivieren</button>
+  <button id="capturePhoto" style="display: none;">Foto machen</button>
   
   <!-- Video-Element für den Kamerastream -->
   <video id="video" autoplay playsinline style="display: none;"></video>
+  
+  <!-- Canvas zum Anzeigen des Fotos -->
+  <canvas id="photoCanvas" style="display: none;"></canvas>
 
   <script src="script.js"></script>
 </body>
